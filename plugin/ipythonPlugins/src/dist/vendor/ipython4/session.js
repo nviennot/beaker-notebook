@@ -1,10 +1,10 @@
 // Copyright (c) IPython Development Team.
 // Distributed under the terms of the Modified BSD License.
 
-define('ipython3_session', [
-    'ipython3_namespace',
-    'ipython3_utils',
-    'ipython3_kernel'
+define('services/sessions/session', [
+    'base/js/namespace',
+    'base/js/utils',
+    'services/kernels/kernel'
 ], function(IPython, utils, kernel) {
     "use strict";
 

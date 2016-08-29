@@ -41,6 +41,8 @@ define('services/kernels/comm', [
         var comm = new Comm(target_name, comm_id);
         this.register_comm(comm);
         comm.open(data, callbacks, metadata);
+        console.log("new _comm");
+        console.log(comm_id);
         return comm;
     };
     
@@ -64,6 +66,8 @@ define('services/kernels/comm', [
          */
         this.comms[comm.comm_id] = Promise.resolve(comm);
         comm.kernel = this.kernel;
+        console.log("register_comm");
+        console.log(comm.comm_id);
         return comm.comm_id;
     };
     
@@ -80,6 +84,8 @@ define('services/kernels/comm', [
         var content = msg.content;
         var that = this;
         var comm_id = content.comm_id;
+        console.log("comm_open");
+        console.log(comm_id);
 
         this.comms[comm_id] = utils.load_class(content.target_name, content.target_module, 
             this.targets).then(function(target) {
