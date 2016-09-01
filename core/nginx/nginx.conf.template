@@ -81,6 +81,12 @@ http {
       return 301 $scheme://$http_host%(start_page)s;
     }
 
+	# access to beaker status
+	location /beakerstatus {
+		add_header Content-Type application/json;
+    	return 200 '{ "result" : "ok", "message" : "" }';
+	}
+
     # version get request
     location = /version {
       add_header Access-Control-Allow-Origin *;
