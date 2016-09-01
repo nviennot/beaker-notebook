@@ -46,6 +46,7 @@ compileJava.dependsOn antlr4_java
 compileJava {
   options.compilerArgs << '-Xlint:deprecation'
   options.compilerArgs << '-Xlint:unchecked'
+  options.encoding = 'UTF-8'
 }
 
 

@@ -36,6 +36,7 @@ dependencies {
 compileJava {
   options.compilerArgs << '-Xlint:deprecation'
   options.compilerArgs << '-Xlint:unchecked'
+  options.encoding = 'UTF-8'
 }
 
 // Fix command-length issue in windows startscript

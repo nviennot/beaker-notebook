@@ -95,6 +95,7 @@ task addFavicon2Javadoc {
 compileJava {
   options.compilerArgs << '-Xlint:deprecation'
   options.compilerArgs << '-Xlint:unchecked'
+  options.encoding = 'UTF-8'
 }
 
 task installDist {

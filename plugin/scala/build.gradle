@@ -41,6 +41,7 @@ compileScala
 compileJava {
   options.compilerArgs << '-Xlint:deprecation'
   options.compilerArgs << '-Xlint:unchecked'
+  options.encoding = 'UTF-8'
 }
 
 if (hasProperty('evalPluginDir')) {

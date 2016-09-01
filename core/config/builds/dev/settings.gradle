@@ -13,7 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-include 'shared', 'core', 'plugin:jvm', 'plugin:groovy', 'plugin:javash', 'plugin:ipythonPlugins', 'plugin:node', 'plugin:r', 'plugin:scala', 'plugin:clojure', 'plugin:kdb', 'plugin:cpp', 'plugin:sqlsh','test'
+ 
+ /* , 'plugin:node' */
+ 
+include 'shared', 'core', 'plugin:jvm', 'plugin:groovy', 'plugin:javash', 'plugin:ipythonPlugins', 'plugin:r', 'plugin:scala', 'plugin:clojure', 'plugin:kdb', 'plugin:cpp', 'plugin:sqlsh','test'
 def root = new File(settingsDir, "../../../../")
 project(':shared').projectDir = new File(root, "shared")
 project(':core').projectDir = new File(root, "core")
@@ -22,7 +25,7 @@ project(':plugin:jvm').projectDir = new File(root, "/plugin/jvm")
 project(':plugin:groovy').projectDir = new File(root, "/plugin/groovy")
 project(':plugin:javash').projectDir = new File(root, "/plugin/javash")
 project(':plugin:ipythonPlugins').projectDir = new File(root, "/plugin/ipythonPlugins")
-project(':plugin:node').projectDir = new File(root, "/plugin/node")
+/*project(':plugin:node').projectDir = new File(root, "/plugin/node")*/
 project(':plugin:r').projectDir = new File(root, "/plugin/r")
 project(':plugin:scala').projectDir = new File(root, "/plugin/scala")
 project(':plugin:clojure').projectDir = new File(root, "/plugin/clojure")

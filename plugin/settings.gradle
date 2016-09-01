@@ -21,13 +21,14 @@ include 'shared',
         'plugin:python3',
         'plugin:iruby',
         'plugin:julia',
-        'plugin:node',
         'plugin:r',
         'plugin:scala',
         'plugin:clojure',
         'plugin:kdb',
         'plugin:cpp',
         'plugin:sqlsh'
+
+/*        'plugin:node', */
 
 project(':shared').projectDir = file("../shared")
 project(':plugin:jvm').projectDir = file("./jvm")
