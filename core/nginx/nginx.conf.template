@@ -86,6 +86,10 @@ http {
 		add_header Content-Type application/json;
     	return 200 '{ "result" : "ok", "message" : "" }';
 	}
+	location /%(urlhash)sbeakerstatus {
+		add_header Content-Type application/json;
+    	return 200 '{ "result" : "ok", "message" : "" }';
+	}
 
     # version get request
     location = /version {
