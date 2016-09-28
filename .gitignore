@@ -7,6 +7,7 @@ core/src/vendor
 shared/src/main/dist/
 core/src/main/dist/
 core/config/plugins/
+core/src/main/web/app/img/
 core/config/version
 core/config/build_time
 core/src/main/web/app/vendor
