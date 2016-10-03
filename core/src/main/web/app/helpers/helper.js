@@ -20,7 +20,7 @@
  */
 (function() {
   'use strict';
-  var module = angular.module('bk.helper', ['bk.utils', 'bk.core', 'bk.debug', 'bk.electron', 'bk.publication']);
+  var module = angular.module('bk.helper', ['bk.utils', 'bk.core', 'bk.debug', 'bk.electron', 'bk.publication','bk.katexhelper']);
   /**
    * bkHelper
    * - should be the only thing plugins depend on to interact with general beaker stuffs (other than
@@ -30,7 +30,7 @@
    *   plugins dynamically
    * - it mostly should just be a subset of bkUtil
    */
-  module.factory('bkHelper', function($location, $rootScope, $httpParamSerializer, $uibModal,  bkUtils, bkCoreManager, bkSessionManager, bkEvaluatorManager, bkDebug, bkElectron, bkPublicationAuth, GLOBALS) {
+  module.factory('bkHelper', function($location, $rootScope, $httpParamSerializer, $uibModal,  bkUtils, bkCoreManager, bkSessionManager, bkEvaluatorManager, bkDebug, bkElectron, bkPublicationAuth, katexhelper, GLOBALS) {
     var getCurrentApp = function() {
       return bkCoreManager.getBkApp();
     };
@@ -54,8 +54,19 @@
       "#FFE377C2", // pink
       "#FF7F7F7F", // gray
       "#FFBCBD22", // pear
-      "#FF17BECF"  // aqua
+      "#FF17BECF",  // aqua
+      "#FFAEC7E8",
+      "#FFFFBB78",
+      "#FF98DF8A",
+      "#FFFF9896",
+      "#FFC5B0D5",
+      "#FFC49C94",
+      "#FFF7B6D2",
+      "#FFC7C7C7",
+      "#FFDBDB8D",
+      "#FF9EDAE5"
     ];
+
     defaultPlotColors[GLOBALS.THEMES.AMBIANCE] = [
       "#FF1F77B4", // blue
       "#FFFF7F0E", // orange
@@ -66,7 +77,17 @@
       "#FFE377C2", // pink
       "#FF7F7F7F", // gray
       "#FFBCBD22", // pear
-      "#FF17BECF"  // aqua
+      "#FF17BECF",  // aqua
+      "#FFAEC7E8",
+      "#FFFFBB78",
+      "#FF98DF8A",
+      "#FFFF9896",
+      "#FFC5B0D5",
+      "#FFC49C94",
+      "#FFF7B6D2",
+      "#FFC7C7C7",
+      "#FFDBDB8D",
+      "#FF9EDAE5"
     ];
 
     var defaultEvaluator = GLOBALS.DEFAULT_EVALUATOR;
@@ -108,11 +129,17 @@
         }
         return e.ctrlKey && !e.altKey && e.shiftKey && (e.which === 85);// Cmd + Shift + U
       },
+      isSaveNotebookAsShortcut: function (e){
+        if (this.isMacOS){
+          return e.shiftKey && e.metaKey && !e.ctrlKey && !e.altKey && (e.which === 83);// Cmd + shift + s
+        }
+        return e.ctrlKey && e.shiftKey && e.altKey && (e.which === 83);// Ctrl + shift + s
+      },
       isSaveNotebookShortcut: function (e){
         if (this.isMacOS){
-          return e.metaKey && !e.ctrlKey && !e.altKey && (e.which === 83);// Cmd + s
+          return e.metaKey && !e.shiftKey && !e.ctrlKey && !e.altKey && (e.which === 83);// Cmd + s
         }
-        return e.ctrlKey && !e.altKey && (e.which === 83);// Ctrl + s
+        return e.ctrlKey && !e.shiftKey && !e.altKey && (e.which === 83);// Ctrl + s
       },
       isLanguageManagerShortcut: function (e) {
         if (this.isMacOS) {
@@ -122,7 +149,7 @@
       },
       isResetEnvironmentShortcut: function (e) {
         if (this.isMacOS) {
-          return e.ctrlKey && (e.which === 82); // Alt + r
+          return e.ctrlKey && (e.which === 82); // ctrlKey + r
         }
         return e.altKey && (e.which === 82); // Alt + r
       },
@@ -145,6 +172,19 @@
         }
         return e.ctrlKey && !e.altKey && e.shiftKey &&
           ((e.which>=49) && (e.which<=50));// alt + Shift + 1...2
+      },
+      isSearchReplace: function (e){
+        if (this.isMacOS){
+          return e.ctrlKey && (e.which === 70);// Ctrl + f
+        }
+        return e.altKey && (e.which === 70);// Alt + f
+      },
+  
+      isPageUpKey: function (e) {
+        return e.which === 33;
+      },
+      isPageDownKey: function (e) {
+        return e.which === 34;
       },
 
       //see http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
@@ -422,7 +462,7 @@
         beakerObj.setupBeakerObject({});
         beakerObj.notebookToBeakerObject();
         var beaker = beakerObj.beakerObj;
-        beaker.prefs = {useOutputPanel: false, outputLineLimit: 1000};
+        beaker.prefs = {useOutputPanel: false, outputLineLimit: 1000, outputColumnLimit: 50};
         beaker.client = {
           mac: navigator.appVersion.indexOf("Mac") != -1,
           windows: navigator.appVersion.indexOf("Win") != -1,
@@ -539,7 +579,7 @@
       },        
       typeset: function(element) {
         try {
-          renderMathInElement(element[0], {
+          katexhelper.renderElem(element[0], {
             delimiters: [
               {left: "$$", right: "$$", display: true},
               {left: "$", right:  "$", display: false},

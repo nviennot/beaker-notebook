@@ -102,15 +102,64 @@ var BeakerPageObject = function() {
   };
 
   this.setNormalEditMode = function() {
-    this.setEditMode().then(element(by.css('#normal-edit-mode-menuitem')).click);
+    var self = this;
+    element(by.css('.notebook-menu')).click()
+        .then(function(){self.activateEditModeMenuItem();})
+        .then(function(){browser.wait(self.EC.visibilityOf(element(by.css('#edit-mode-menuitem'))), 5000);})
+        .then(function(){browser.actions().mouseMove(element(by.css('#edit-mode-menuitem'))).perform(); browser.sleep(1000);})
+        .then(function(){self.activateNormalEditModeMenuItem(); browser.sleep(1000);})
+        .then(function(){browser.wait(self.EC.visibilityOf(element(by.css('#normal-edit-mode-menuitem'))), 5000);})
+        .then(function(){console.log('normal-edit-mode-menuitem is visible'); element(by.css('#normal-edit-mode-menuitem')).click();});
   };
 
   this.setEmacsEditMode = function() {
-    this.setEditMode().then(element(by.css('#emacs-edit-mode-menuitem')).click);
+    this.setEditMode();
+    element(by.css('#emacs-edit-mode-menuitem')).click();
   };
 
   this.setVimEditMode = function () {
-    this.setEditMode().then(element(by.css('#vim-edit-mode-menuitem')).click);
+    var self = this;
+    element(by.css('.notebook-menu')).click()
+        .then(function(){self.activateEditModeMenuItem();})
+        .then(function(){browser.wait(self.EC.visibilityOf(element(by.css('#edit-mode-menuitem'))), 5000);})
+        .then(function(){browser.actions().mouseMove(element(by.css('#edit-mode-menuitem'))).perform(); browser.sleep(1000);})
+        .then(function(){self.activateVimEditModeMenuItem(); browser.sleep(1000);})
+        .then(function(){browser.wait(self.EC.visibilityOf(element(by.css('#vim-edit-mode-menuitem'))), 5000);})
+        .then(function(){console.log('vim-edit-mode-menuitem is visible'); element(by.css('#vim-edit-mode-menuitem')).click();});
+  };
+
+  this.activateEditModeMenuItem = function() {
+    element(by.css('#edit-mode-menuitem')).isDisplayed()
+        .then(function(isVisible) {
+          console.log('EditModeMenuItem dislayed - ' + isVisible);
+          if (!isVisible) {
+            return element(by.css('.notebook-menu')).click();
+          }
+        }.bind(this));
+  };
+
+  this.activateVimEditModeMenuItem = function() {
+    var self = this;
+    element(by.css('#vim-edit-mode-menuitem')).isDisplayed()
+        .then(function(isVisible) {
+          console.log('VimEditModeMenuItem dislayed - ' + isVisible);
+          if (!isVisible) {
+            self.activateEditModeMenuItem();
+            return browser.actions().mouseMove(element(by.css('#edit-mode-menuitem'))).perform();
+          }
+        }.bind(this));
+  };
+
+  this.activateNormalEditModeMenuItem = function() {
+    var self = this;
+    element(by.css('#normal-edit-mode-menuitem')).isDisplayed()
+        .then(function(isVisible) {
+          console.log('NormalEditModeMenuItem dislayed - ' + isVisible);
+          if (!isVisible) {
+            self.activateEditModeMenuItem();
+            return browser.actions().mouseMove(element(by.css('#edit-mode-menuitem'))).perform();
+          }
+        }.bind(this));
   };
 
   this.setSublimeEditMode = function() {
@@ -207,10 +256,27 @@ var BeakerPageObject = function() {
   };
 
   this.insertCellOfType = function(language) {
-    browser.wait(this.EC.presenceOf(this.getCellEvaluatorMenu()), 10000);
-    this.getCellEvaluatorMenu().click();
-    this.cellEvaluatorMenuItem(language).click();
-  }
+    var self = this;
+    browser.sleep(1000);
+    browser.wait(this.EC.visibilityOf(this.getCellEvaluatorMenu()), 10000)
+      .then(function(isVisible){ console.log('CellEvaluatorMenu is visible - ' + isVisible); },
+            function(error){ console.log('error'); self.createScreenshot("errorCellEvaluatorMenu");  })
+      .then(function(){ self.getCellEvaluatorMenu().click();})
+      .then(function(){ self.activateCellEvaluatorMenu(language);  browser.sleep(1000);})
+      .then(function(){ browser.wait(self.EC.visibilityOf(self.cellEvaluatorMenuItem(language)), 10000)})
+      .then(function(){ console.log('cellEvaluatorMenuItem is visible');
+        self.cellEvaluatorMenuItem(language).click();});
+  };
+
+  this.activateCellEvaluatorMenu = function(language) {
+    this.cellEvaluatorMenuItem(language).isDisplayed()
+        .then(function(isVisible) {
+          console.log('cellEvaluatorMenuItem dislayed - ' + isVisible);
+          if (!isVisible) {
+            return this.getCellEvaluatorMenu().click();
+          }
+        }.bind(this));
+  };
 
   this.languageManager = element(by.className('plugin-manager'));
   this.languageManagerButtonKnown = function(language) {
@@ -314,9 +380,11 @@ var BeakerPageObject = function() {
 
   this.waitForCellOutput = function() {
     var self = this;
-
-    this.waitUntilLoadingCellOutput().then(function(){
-      browser.wait(self.EC.not(self.EC.textToBePresentInElement($('bk-code-cell-output'), 'Elapsed:'), 10000));
+    browser.wait(this.EC.presenceOf($('bk-code-cell-output')), 5000)
+      .then(function(){
+    browser.wait(self.EC.not(self.EC.textToBePresentInElement(element(by.css('bk-code-cell-output pre')), 'waiting for evaluator initialization ...')), 20000); })
+      .then(function(){
+    browser.wait(self.EC.not(self.EC.textToBePresentInElement($('bk-code-cell-output'), 'Elapsed:'), 10000));
     });
   };
 
@@ -734,7 +802,7 @@ var BeakerPageObject = function() {
   this.clickCodeCellInputButtonByIdCell = function(idCell, outputType, screenshotName, timeOut){
     var self = this;
     if(!timeOut){
-      timeOut = 25000;
+      timeOut = 60000;
     }
     this.runBkCellDefaultButtonByIdCell(idCell);
     browser.wait(this.EC.presenceOf($('bk-code-cell-output[cell-id=' + idCell + ']')), 5000)
@@ -857,9 +925,8 @@ var BeakerPageObject = function() {
         element(by.id('file-dlg-selected-path')).sendKeys(filename);
         element(by.cssContainingText('button', 'Save')).click();
         var filenameCsv = path.join(dir, (filename));
-        browser.wait(fs.existsSync.bind(this, filenameCsv), 10000).then(function(){
-          expect(fs.statSync(filenameCsv).isFile() && fs.existsSync(filenameCsv)).toBe(true);
-          browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+        browser.wait(fs.existsSync.bind(this, filenameCsv), 20000).then(function(){
+          expect(fs.statSync(filenameCsv).isFile()).toBe(true);
         });
       });
     });
