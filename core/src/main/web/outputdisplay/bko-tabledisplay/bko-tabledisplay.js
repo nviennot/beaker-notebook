@@ -1357,7 +1357,16 @@
           }
 
           scope.doCreateData(model);
-          scope.doCreateTable(model);
+          //scope.doCreateTable(model);
+
+          $('#' + scope.id).DataTable( {
+          data:           scope.data,
+            deferRender:    true,
+            scrollY:        200,
+            scrollCollapse: true,
+            scroller:       true
+          } );
+        
           $(document.body).off('click.bko-dt-container', scope.containerClickFunction);
           $(document.body).on('click.bko-dt-container', scope.containerClickFunction);
         };
