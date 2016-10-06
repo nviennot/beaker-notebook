@@ -1357,15 +1357,7 @@
           }
 
           scope.doCreateData(model);
-          //scope.doCreateTable(model);
-
-          $('#' + scope.id).DataTable( {
-          data:           scope.data,
-            deferRender:    true,
-            scrollY:        200,
-            scrollCollapse: true,
-            scroller:       true
-          } );
+          scope.doCreateTable(model);
         
           $(document.body).off('click.bko-dt-container', scope.containerClickFunction);
           $(document.body).on('click.bko-dt-container', scope.containerClickFunction);
@@ -2314,6 +2306,9 @@
             'ordering': true,
             'order': scope.tableOrder ? _.cloneDeep(scope.tableOrder) : [],
             'scrollX': '10%',
+            'scrollY':        200,
+            'scrollCollapse': true,
+            'scroller':       true,
             'searching': true,
             'deferRender': true,
             'language': {
