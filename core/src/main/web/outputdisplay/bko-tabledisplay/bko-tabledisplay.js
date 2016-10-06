@@ -567,7 +567,7 @@
         $scope.doUsePagination = function () {
           $scope.pagination.use = !$scope.pagination.use;
           if(!$scope.pagination.use){
-            $scope.pagination.rowsToDisplay = $scope.table.settings()[0]._iDisplayLength;
+            $scope.pagination.rowsToDisplay = DEFAULT_PAGE_LENGTH;//$scope.table.settings()[0]._iDisplayLength;
           }
           // reorder the table data
           $scope.applyChanges();
@@ -928,7 +928,12 @@
 
         $scope.getScrollY = function () {
           var rowHeight = bkHelper.getBkNotebookViewModel().isAdvancedMode() ? ROW_HEIGHT_ADVANCED_MODE : ROW_HEIGHT;
-          var rowsNumber = $scope.pagination.rowsToDisplay > 0 ? $scope.pagination.rowsToDisplay : $scope.data.length;
+          var rowsNumber = null;
+          if($scope.pagination.rowsToDisplay > 0){
+            rowsNumber = $scope.pagination.rowsToDisplay;
+          }else{
+            rowsNumber = $scope.data.length > DEFAULT_PAGE_LENGTH ? DEFAULT_PAGE_LENGTH : $scope.data.length;
+          }
           return rowsNumber * rowHeight;
         };
 
@@ -1242,7 +1247,7 @@
               }
             });
             scope.pagination = {
-              'use' : true,
+              'use' : false,
               'rowsToDisplay' : DEFAULT_PAGE_LENGTH,
               'fixLeft' : !_.isEmpty(columnsFrozen) ? Math.max.apply(null, columnsFrozen) : 0,
               'fixRight' : !_.isEmpty(columnsFrozenRight) ? scope.columnNames.length - Math.min.apply(null, columnsFrozenRight) + 1 : 0,
@@ -2306,9 +2311,6 @@
             'ordering': true,
             'order': scope.tableOrder ? _.cloneDeep(scope.tableOrder) : [],
             'scrollX': '10%',
-            'scrollY':        200,
-            'scrollCollapse': true,
-            'scroller':       true,
             'searching': true,
             'deferRender': true,
             'language': {
@@ -2332,7 +2334,7 @@
             'drawCallback': function(settings) {
               //jscs:disable
               scope.update_size();
-              scope.update_selected();
+              //scope.update_selected();
               scope.updateBackground();
               scope.updateDTMenu();
               //jscs:enable
@@ -2348,12 +2350,7 @@
           };
 
           var domCommon = '<"bko-table"Z' + (scope.data.length > 500 ? 'r' : '') + 't';
-          if (!scope.pagination.use) {
-            init.paging = false;
-            init.scrollY = scope.getScrollY();
-            init.scrollCollapse = true;
-            init.dom = domCommon + '>';
-          } else {
+          if (scope.pagination.use) {
             init.dom = domCommon + '<"bko-table-bottom"<"bko-table-selector"l><"bko-table-pagenum"p><"bko-table-use-pagination">>S>';
             if (scope.data.length > MIN_ROWS_FOR_PAGING) {
               init.pagingType = 'simple_numbers';
@@ -2363,6 +2360,13 @@
               init.paging = false;
               init.scrollCollapse = true;
             }
+            init.scrollY = scope.getScrollY();
+          } else {
+            init.scroller = true;
+            init.paging = false;
+            init.scrollY = scope.getScrollY();
+            init.scrollCollapse = true;
+            init.dom = domCommon + '>';
           }
           scope.fixcreated = false;
           if (!_.isEmpty(scope.contextMenuItems)) {
