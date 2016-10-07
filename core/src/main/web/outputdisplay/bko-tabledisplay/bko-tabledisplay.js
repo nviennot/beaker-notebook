@@ -564,15 +564,6 @@
           return column && column.visible();
         };
 
-        $scope.doUsePagination = function () {
-          $scope.pagination.use = !$scope.pagination.use;
-          if(!$scope.pagination.use){
-            $scope.pagination.rowsToDisplay = DEFAULT_PAGE_LENGTH;//$scope.table.settings()[0]._iDisplayLength;
-          }
-          // reorder the table data
-          $scope.applyChanges();
-        };
-
         $scope.refreshCells = function() {
           $scope.getCellIdx      =  [];
           $scope.getCellNam      =  [];
@@ -937,15 +928,30 @@
           return rowsNumber * rowHeight;
         };
 
+        $scope.doUsePagination = function () {
+          $scope.pagination.use = !$scope.pagination.use;
+          if($scope.pagination.use){
+            $scope.pagination.rowsToDisplay = DEFAULT_PAGE_LENGTH;//$scope.table.settings()[0]._iDisplayLength;
+            //$scope.pagination.rowsToDisplay = $scope.table.settings()[0]._iDisplayLength;
+          }
+          // reorder the table data
+          $scope.applyChanges();
+  
+        };
+        
         $scope.changePageLength = function (len) {
           $scope.pagination.rowsToDisplay = len;
           if ($scope.pagination.use) {
             $scope.table.page.len(len).draw();
-          } else {
+            //$scope.update_size();
+          } /*else {
             var scrollBody = $('#' + $scope.id).parent();
             scrollBody.css('max-height', $scope.getScrollY());
             $scope.update_size();
-          }
+          }*/
+          var scrollBody = $('#' + $scope.id).parent();
+          scrollBody.css('max-height', $scope.getScrollY());
+          $scope.update_size();
         };
       },
       link: function(scope, element) {
@@ -2350,22 +2356,22 @@
           };
 
           var domCommon = '<"bko-table"Z' + (scope.data.length > 500 ? 'r' : '') + 't';
+          init.scrollY = scope.getScrollY();
+          init.scrollCollapse = true;
           if (scope.pagination.use) {
             init.dom = domCommon + '<"bko-table-bottom"<"bko-table-selector"l><"bko-table-pagenum"p><"bko-table-use-pagination">>S>';
+            //init.scroller = false;
             if (scope.data.length > MIN_ROWS_FOR_PAGING) {
+              init.paging = true;
               init.pagingType = 'simple_numbers';
               init.pageLength = scope.pagination.rowsToDisplay;
               init.lengthMenu = scope.rowsToDisplayMenu;
-            } else {
+            }else{
               init.paging = false;
-              init.scrollCollapse = true;
             }
-            init.scrollY = scope.getScrollY();
           } else {
+            init.paging = true; // "init.scroller" use it anyway
             init.scroller = true;
-            init.paging = false;
-            init.scrollY = scope.getScrollY();
-            init.scrollCollapse = true;
             init.dom = domCommon + '>';
           }
           scope.fixcreated = false;
