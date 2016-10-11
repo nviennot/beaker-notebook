@@ -927,31 +927,28 @@
           }
           return rowsNumber * rowHeight;
         };
-
+        
         $scope.doUsePagination = function () {
           $scope.pagination.use = !$scope.pagination.use;
           if($scope.pagination.use){
-            $scope.pagination.rowsToDisplay = DEFAULT_PAGE_LENGTH;//$scope.table.settings()[0]._iDisplayLength;
-            //$scope.pagination.rowsToDisplay = $scope.table.settings()[0]._iDisplayLength;
+            $scope.pagination.rowsToDisplay = DEFAULT_PAGE_LENGTH;
+            $scope.doCreateTable($scope.model.getCellModel());
+            $scope.table.page.len($scope.pagination.rowsToDisplay).draw();
+            $scope.update_size();
+          }else{
+            $scope.applyChanges();
           }
-          // reorder the table data
-          $scope.applyChanges();
-  
         };
-        
+
         $scope.changePageLength = function (len) {
           $scope.pagination.rowsToDisplay = len;
           if ($scope.pagination.use) {
             $scope.table.page.len(len).draw();
-            //$scope.update_size();
-          } /*else {
+          } else {
             var scrollBody = $('#' + $scope.id).parent();
             scrollBody.css('max-height', $scope.getScrollY());
             $scope.update_size();
-          }*/
-          var scrollBody = $('#' + $scope.id).parent();
-          scrollBody.css('max-height', $scope.getScrollY());
-          $scope.update_size();
+          }
         };
       },
       link: function(scope, element) {
@@ -1416,6 +1413,7 @@
             }
             pp.width(tableWidth);
           }
+          pp.height(scope.getScrollY());
           if (scope.fixcols) { //do not need data update
             scope.fixcols._fnColCalc();
             scope.fixcols._fnGridLayout()
@@ -1914,7 +1912,7 @@
               });
           }
         };
-
+        
         scope.doCreateTable = function(model) {
           var cols = [];
           var i;
@@ -2341,8 +2339,15 @@
               //jscs:disable
               scope.update_size();
               //scope.update_selected();
-              scope.updateBackground();
-              scope.updateDTMenu();
+              //scope.updateBackground();
+              //scope.updateDTMenu();
+              
+              if (!scope.pagination.use) {
+                jQuery(settings.nTableWrapper).find('.dataTables_paginate').hide();
+              }else{
+                jQuery(settings.nTableWrapper).find('.dataTables_paginate').css('float', 'left');
+              }
+              
               //jscs:enable
             },
             'bSortCellsTop': true,
@@ -2355,24 +2360,23 @@
             }
           };
 
-          var domCommon = '<"bko-table"Z' + (scope.data.length > 500 ? 'r' : '') + 't';
-          init.scrollY = scope.getScrollY();
-          init.scrollCollapse = true;
+          init.info = false;
+          init.lengthChange = false;
           if (scope.pagination.use) {
-            init.dom = domCommon + '<"bko-table-bottom"<"bko-table-selector"l><"bko-table-pagenum"p><"bko-table-use-pagination">>S>';
-            //init.scroller = false;
             if (scope.data.length > MIN_ROWS_FOR_PAGING) {
-              init.paging = true;
+              init.scroller = false;
               init.pagingType = 'simple_numbers';
               init.pageLength = scope.pagination.rowsToDisplay;
               init.lengthMenu = scope.rowsToDisplayMenu;
-            }else{
+            } else {
               init.paging = false;
+              init.scrollCollapse = true;
             }
+            init.scrollY = scope.getScrollY();
           } else {
-            init.paging = true; // "init.scroller" use it anyway
             init.scroller = true;
-            init.dom = domCommon + '>';
+            init.scrollY = scope.getScrollY();
+            init.scrollCollapse = true;
           }
           scope.fixcreated = false;
           if (!_.isEmpty(scope.contextMenuItems)) {
@@ -2407,7 +2411,7 @@
               })
             }
           });
-
+          
           $(document).on('contextmenu.bko-dt-header', id +'_wrapper thead th', function(){
             $(this).blur();
           });
@@ -2454,9 +2458,9 @@
                 .appendTo(pagination);
             }
 
-            /*
+            
             $(id + ' tbody').off('click');
-            */
+            
             $(id + ' tbody').on('dblclick', 'td', function(e) {
               if (!scope.table) { return; }
               var rowIdx;
