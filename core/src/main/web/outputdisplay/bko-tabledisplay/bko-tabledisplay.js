@@ -132,7 +132,8 @@
     return jqInput;
   };
 
-  $.fn.dataTable.ext.search.push(
+  // TODO UNCOMMENT
+/*  $.fn.dataTable.ext.search.push(
     function (settings, formattedRow, rowIndex, row) {
 
       if (!$(settings.nTHead).find('.filterRow').is(':visible')
@@ -198,7 +199,7 @@
       }
       return true;
     }
-  );
+  );*/
 
   jQuery.fn.dataTableExt.aTypes.unshift(function(sData) {
     if (typeof sData !== 'string') {
@@ -934,7 +935,11 @@
             $scope.pagination.rowsToDisplay = DEFAULT_PAGE_LENGTH;
             $scope.doCreateTable($scope.model.getCellModel());
             $scope.table.page.len($scope.pagination.rowsToDisplay).draw();
-            $scope.update_size();
+            
+            //var pp = $('#' + $scope.id).parent();
+            //pp.height($scope.getScrollY());
+            
+            //$scope.update_size();
           }else{
             $scope.applyChanges();
           }
@@ -2585,13 +2590,14 @@
                 originalEvent.preventDefault();
                 scope.onKeyAction(cell.index().column, originalEvent);
               })
-              .on('column-visibility.dt', function (e, settings, column, state) {
+              //TODO UNCOMMENT
+/*              .on('column-visibility.dt', function (e, settings, column, state) {
                 scope.getCellSho[scope.colorder[column] - 1] = state;
                 setTimeout(function(){
                   scope.updateHeaderLayout();
                   scope.table.draw(false);
                 }, 0);
-              })
+              })*/
               .on( 'column-sizing.dt', function ( e, settings ) {
                 scope.updateTableWidth();
               });
