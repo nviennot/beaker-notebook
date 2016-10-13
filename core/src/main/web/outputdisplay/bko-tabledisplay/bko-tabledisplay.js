@@ -883,7 +883,8 @@
           return '4.' + precision;
         };
         $scope.doubleWithPrecisionConverters = {}; //map: precision -> convert function
-        for (var precision = 1; precision < 10; precision++) {
+        //TODO UNCOMMENT
+/*        for (var precision = 1; precision < 10; precision++) {
           $scope.doubleWithPrecisionConverters[precision] = function(precision, value, type, full, meta) {
             if (value !== undefined && value !== '' && value !== 'null' && value !== null) {
               return parseFloat(value).toFixed(precision);
@@ -893,7 +894,7 @@
             }
             return value;
           }.bind({}, precision);
-        }
+        }*/
         $scope.allStringTypes = [{type: 0, name: 'string'}, {type: 10, name: 'html'}];
         $scope.allTimeTypes   = [{type: 8, name: 'datetime'},
                                  {type: 0, name: 'string'}];
@@ -2327,7 +2328,8 @@
             },
             'preDrawCallback': function(settings) {
               scope.updateTableWidth();
-              if(scope.table){
+              //TODO UNCOMMENT
+/*              if(scope.table){
                 //allow cell's text be truncated when column is resized to a very small
                 scope.table.columns().every(function(i){
                   var colWidth = settings.aoColumns[i].sWidthOrig;
@@ -2338,11 +2340,12 @@
                       .css('min-width', colWidth);
                   }
                 });
-              }
+              }*/
             },
             'drawCallback': function(settings) {
               //jscs:disable
               scope.update_size();
+              //TODO UNCOMMENT
               //scope.update_selected();
               //scope.updateBackground();
               //scope.updateDTMenu();
@@ -2427,7 +2430,8 @@
               .removeClass(FC_LEFT_SEPARATOR_CLASS + ' ' + FC_RIGHT_SEPARATOR_CLASS);
             scope.table = $(id).DataTable(init);
 
-            scope.updateHeaderLayout();
+            //TODO UNCOMMENT
+            //scope.updateHeaderLayout();
 
             scope.table.settings()[0].oScroll.iBarWidth = scope.scrollbarWidth;
             scope.renderMenu = true;
@@ -2450,7 +2454,8 @@
               'iFixedColumnsRight': scope.pagination.fixRight
             });
             scope.keyTable = new $.fn.dataTable.KeyTable($(id));
-            scope.refreshCells();
+            //TODO UNCOMMENT
+            //scope.refreshCells();
 
             if(init.paging !== false){
               var pagination = $(element).find(".bko-table-use-pagination");
@@ -2556,7 +2561,8 @@
               }
             });
 
-            $(id + ' tbody')
+            //TODO UNCOMMENT
+/*            $(id + ' tbody')
               .on('mouseenter.bko-dt-highlight', 'tr', function () {
                 if (!scope.table) { return; }
                 var dtTR = scope.getDtRow(this);
@@ -2570,7 +2576,7 @@
                 var rowIndex = scope.table.row(dtTR).index();
                 $(dtTR).removeClass('hover');
                 scope.highlightFixedColumnRow (rowIndex, false);
-              });
+              });*/
 
             $(scope.table.table().container()).find('.dataTables_scrollHead').on('scroll', function () {
               var filtersInFocus = $(scope.table.table().container()).find('.filter-input:focus');
@@ -2636,8 +2642,9 @@
             scope.updateFixedColumnsSeparator();
 
             scope.fixcols = new $.fn.dataTable.FixedColumns($(id), inits);
-            scope.fixcols.fnRedrawLayout();
-            $rootScope.$emit('beaker.resize');
+            //TODO UNCOMMENT
+            //scope.fixcols.fnRedrawLayout();
+            //$rootScope.$emit('beaker.resize');
 
             setTimeout(function(){
               if (!scope.table) { return; }
