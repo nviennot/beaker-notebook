@@ -200,6 +200,7 @@
       return true;
     }
   );*/
+//TODO UNCOMMENT END
 
   jQuery.fn.dataTableExt.aTypes.unshift(function(sData) {
     if (typeof sData !== 'string') {
@@ -895,6 +896,7 @@
             return value;
           }.bind({}, precision);
         }*/
+        //TODO UNCOMMENT END
         $scope.allStringTypes = [{type: 0, name: 'string'}, {type: 10, name: 'html'}];
         $scope.allTimeTypes   = [{type: 8, name: 'datetime'},
                                  {type: 0, name: 'string'}];
@@ -2341,14 +2343,16 @@
                   }
                 });
               }*/
+              //TODO UNCOMMENT END
             },
             'drawCallback': function(settings) {
               //jscs:disable
               scope.update_size();
               //TODO UNCOMMENT
-              //scope.update_selected();
-              //scope.updateBackground();
-              //scope.updateDTMenu();
+/*              scope.update_selected();
+              scope.updateBackground();
+              scope.updateDTMenu();*/
+              //TODO UNCOMMENT END
               
               if (!scope.pagination.use) {
                 jQuery(settings.nTableWrapper).find('.dataTables_paginate').hide();
@@ -2432,7 +2436,8 @@
 
             //TODO UNCOMMENT
             //scope.updateHeaderLayout();
-
+            //TODO UNCOMMENT END
+            
             scope.table.settings()[0].oScroll.iBarWidth = scope.scrollbarWidth;
             scope.renderMenu = true;
             if (!scope.colorder) {
@@ -2456,6 +2461,7 @@
             scope.keyTable = new $.fn.dataTable.KeyTable($(id));
             //TODO UNCOMMENT
             //scope.refreshCells();
+            //TODO UNCOMMENT END
 
             if(init.paging !== false){
               var pagination = $(element).find(".bko-table-use-pagination");
@@ -2577,6 +2583,7 @@
                 $(dtTR).removeClass('hover');
                 scope.highlightFixedColumnRow (rowIndex, false);
               });*/
+             //TODO UNCOMMENT END
 
             $(scope.table.table().container()).find('.dataTables_scrollHead').on('scroll', function () {
               var filtersInFocus = $(scope.table.table().container()).find('.filter-input:focus');
@@ -2604,6 +2611,7 @@
                   scope.table.draw(false);
                 }, 0);
               })*/
+               //TODO UNCOMMENT END
               .on( 'column-sizing.dt', function ( e, settings ) {
                 scope.updateTableWidth();
               });
@@ -2643,8 +2651,9 @@
 
             scope.fixcols = new $.fn.dataTable.FixedColumns($(id), inits);
             //TODO UNCOMMENT
-            //scope.fixcols.fnRedrawLayout();
-            //$rootScope.$emit('beaker.resize');
+/*            scope.fixcols.fnRedrawLayout();
+            $rootScope.$emit('beaker.resize');*/
+            //TODO UNCOMMENT END
 
             setTimeout(function(){
               if (!scope.table) { return; }
