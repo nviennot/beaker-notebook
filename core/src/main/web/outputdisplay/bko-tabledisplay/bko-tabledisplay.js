@@ -1506,6 +1506,7 @@
           if (scope.table === undefined) {
             return;
           }
+
           for (var colInd = 0; colInd < scope.columns.length; colInd++) {
 
             var max = Math.max(scope.table.column(colInd).data().max(), Math.abs(scope.table.column(colInd).data().min()));
@@ -1920,7 +1921,7 @@
               });
           }
         };
-        
+
         scope.doCreateTable = function(model) {
           var cols = [];
           var i;
@@ -2322,7 +2323,7 @@
             'autoWidth': true,
             'ordering': true,
             'order': scope.tableOrder ? _.cloneDeep(scope.tableOrder) : [],
-            'scrollX': '10%',
+            //'scrollX': '10%',
             'searching': true,
             'deferRender': true,
             'language': {
@@ -2347,16 +2348,15 @@
             },
             'drawCallback': function(settings) {
               //jscs:disable
-              scope.update_size();
+              //TODO RESIZE
+              //scope.update_size();
               //TODO UNCOMMENT
 /*              scope.update_selected();
               scope.updateBackground();
               scope.updateDTMenu();*/
               //TODO UNCOMMENT END
               
-              if (!scope.pagination.use) {
-                jQuery(settings.nTableWrapper).find('.dataTables_paginate').hide();
-              }else{
+              if (scope.pagination.use) {
                 jQuery(settings.nTableWrapper).find('.dataTables_paginate').css('float', 'left');
               }
               
@@ -2364,22 +2364,26 @@
             },
             'bSortCellsTop': true,
             'colResize': {
-              'tableWidthFixed': false,
-              'resizeCallback': function(column){
+/*              'resizeCallback': function(column){
                 scope.columnWidth[scope.colorder[column.idx] - 1] = column.sWidthOrig;
-              },
-              'exclude': _.range(scope.columns.length - scope.pagination.fixRight, scope.columns.length)
+              },*/
+              'exclude': _.range(scope.columns.length - scope.pagination.fixRight, scope.columns.length),
+              'tableWidthFixed': false,
+              //'rtl': true,
             }
           };
 
           init.info = false;
           init.lengthChange = false;
+          var dom = 'Zt';
+          
           if (scope.pagination.use) {
             if (scope.data.length > MIN_ROWS_FOR_PAGING) {
               init.scroller = false;
               init.pagingType = 'simple_numbers';
               init.pageLength = scope.pagination.rowsToDisplay;
               init.lengthMenu = scope.rowsToDisplayMenu;
+              dom = 'Ztp';
             } else {
               init.paging = false;
               init.scrollCollapse = true;
@@ -2390,6 +2394,7 @@
             init.scrollY = scope.getScrollY();
             init.scrollCollapse = true;
           }
+          init.dom = dom;
           scope.fixcreated = false;
           if (!_.isEmpty(scope.contextMenuItems)) {
             $.contextMenu({
@@ -2430,6 +2435,7 @@
 
           bkHelper.timeout(function() {
             // we must wait for the DOM elements to appear
+
             $(id).parents('.dataTables_scroll').find('th, td')
               .removeClass(FC_LEFT_SEPARATOR_CLASS + ' ' + FC_RIGHT_SEPARATOR_CLASS);
             scope.table = $(id).DataTable(init);
@@ -2443,6 +2449,7 @@
             if (!scope.colorder) {
               scope.colorder = _.range(scope.columnNames.length + 1);
             }
+
             scope.colreorg = new $.fn.dataTable.ColReorder($(id), {
               'order': scope.colorder,
               'fnReorderCallback': function() {
@@ -2458,23 +2465,12 @@
               'iFixedColumns': scope.pagination.fixLeft + 1,
               'iFixedColumnsRight': scope.pagination.fixRight
             });
+
             scope.keyTable = new $.fn.dataTable.KeyTable($(id));
             //TODO UNCOMMENT
             //scope.refreshCells();
             //TODO UNCOMMENT END
 
-            if(init.paging !== false){
-              var pagination = $(element).find(".bko-table-use-pagination");
-              $('<input type="checkbox" checked="true" id=' + scope.id +'usePagination class="beforeCheckbox">')
-                .bind('click', function (e) {
-                  scope.doUsePagination();
-                })
-                .appendTo(pagination);
-              $('<label for=' + scope.id +'usePagination> use pagination</label>')
-                .appendTo(pagination);
-            }
-
-            
             $(id + ' tbody').off('click');
             
             $(id + ' tbody').on('dblclick', 'td', function(e) {
@@ -2585,6 +2581,8 @@
               });*/
              //TODO UNCOMMENT END
 
+            
+
             $(scope.table.table().container()).find('.dataTables_scrollHead').on('scroll', function () {
               var filtersInFocus = $(scope.table.table().container()).find('.filter-input:focus');
               if (filtersInFocus.length) {
@@ -2612,10 +2610,13 @@
                 }, 0);
               })*/
                //TODO UNCOMMENT END
+              //TODO RESIZE
               .on( 'column-sizing.dt', function ( e, settings ) {
+                console.log("column-sizing.dt");
                 scope.updateTableWidth();
               });
 
+            //TODO RESIZE
             function updateSize() {
               clearTimeout(scope.refresh_size);
               scope.refresh_size = setTimeout(function () {
@@ -2623,8 +2624,10 @@
               }, 250);
             }
 
+            //TODO RESIZE
             $(window).bind('resize.' + scope.id, function () {
               updateSize();
+              console.log("resize");
             });
 
             scope.$on(GLOBALS.EVENTS.ADVANCED_MODE_TOGGLED, function () {
@@ -2654,7 +2657,7 @@
 /*            scope.fixcols.fnRedrawLayout();
             $rootScope.$emit('beaker.resize');*/
             //TODO UNCOMMENT END
-
+            
             setTimeout(function(){
               if (!scope.table) { return; }
               scope.applyFilters();

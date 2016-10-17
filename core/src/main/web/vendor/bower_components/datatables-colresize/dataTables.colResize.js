@@ -1,10 +1,10 @@
-/*! ColResize 0.0.10
+/*! ColResize 0.0.11
  */
 
 /**
  * @summary     ColResize
  * @description Provide the ability to resize columns in a DataTable
- * @version     0.0.10
+ * @version     0.0.11
  * @file        dataTables.colResize.js
  * @author      Silvacom Ltd.
  *
@@ -44,9 +44,9 @@
              */
 
             /* Fire an event so other plug-ins can update */
-            $(oSettings.oInstance).trigger('column-resize', [ oSettings, {
+            $(oSettings.oInstance).trigger('column-resize', [oSettings, {
                 "iCol": iCol
-            } ]);
+            }]);
         };
 
         /**
@@ -62,7 +62,7 @@
             if ($.fn.dataTable.Api) {
                 oDTSettings = new $.fn.dataTable.Api(dt).settings()[0];
             }
-            // 1.9 compatibility
+                // 1.9 compatibility
             else if (dt.fnSettings) {
                 // DataTables object, convert to the settings object
                 oDTSettings = dt.fnSettings();
@@ -245,9 +245,9 @@
                 this._fnSetColumnIndexes();
 
                 /* State saving */
-                this.s.dt.oApi._fnCallbackReg( this.s.dt, 'aoStateSaveParams', function (oS, oData) {
+                this.s.dt.oApi._fnCallbackReg(this.s.dt, 'aoStateSaveParams', function (oS, oData) {
                     that._fnStateSave.call(that, oData);
-                }, "ColResize_State" );
+                }, "ColResize_State");
 
                 // State loading
                 this._fnStateLoad();
@@ -259,7 +259,7 @@
              * @private
              */
             "_fnStateSave": function (oState) {
-                this.s.dt.aoColumns.forEach(function(col, index) {
+                this.s.dt.aoColumns.forEach(function (col, index) {
                     oState.columns[index].width = col.sWidthOrig;
                 });
             },
@@ -269,7 +269,7 @@
              * @method  _fnStateLoad
              * @private
              */
-            "_fnStateLoad": function() {
+            "_fnStateLoad": function () {
                 var that = this,
                     loadedState = this.s.dt.oLoadedState;
                 if (loadedState && loadedState.columns) {
@@ -278,7 +278,7 @@
                     // Only apply the saved widths if the number of columns is the same.
                     // Otherwise, we don't know if we're applying the width to the correct column.
                     if (colStates.length > 0 && colStates.length === currCols.length) {
-                        colStates.forEach(function(state, index) {
+                        colStates.forEach(function (state, index) {
                             var col = that.s.dt.aoColumns[index];
                             if (state.width) {
                                 col.sWidthOrig = col.sWidth = state.width;
@@ -308,7 +308,7 @@
                             if (v) {
                                 if (namespace) {
                                     //Add the event to the array of events to be restored later
-                                    that.dom.restoreEvents.push({"until": until, "obj": obj, "type": v.type, "namespace": v.namespace, "handler": v.handler});
+                                    that.dom.restoreEvents.push({ "until": until, "obj": obj, "type": v.type, "namespace": v.namespace, "handler": v.handler });
                                     //If the namespace matches
                                     if (v.namespace == namespace) {
                                         //Turn off/unbind the event
@@ -316,7 +316,7 @@
                                     }
                                 } else {
                                     //Add the event to the array of events to be restored later
-                                    that.dom.restoreEvents.push({"until": until, "obj": obj, "type": v.type, "namespace": null, "handler": v.handler});
+                                    that.dom.restoreEvents.push({ "until": until, "obj": obj, "type": v.type, "namespace": null, "handler": v.handler });
                                     //Turn off/unbind the event
                                     $(obj).off(type);
                                 }
@@ -352,13 +352,13 @@
              * Mouse drop and drag
              */
 
-            "_fnSetupMouseListeners":function() {
+            "_fnSetupMouseListeners": function () {
                 var that = this;
-                $(that.s.dt.nTableWrapper).off("mouseenter.ColResize").on("mouseenter.ColResize","th",function(e) {
+                $(that.s.dt.nTableWrapper).off("mouseenter.ColResize").on("mouseenter.ColResize", "th", function (e) {
                     e.preventDefault();
                     that._fnMouseEnter.call(that, e, this);
                 });
-                $(that.s.dt.nTableWrapper).off("mouseleave.ColResize").on("mouseleave.ColResize","th",function(e) {
+                $(that.s.dt.nTableWrapper).off("mouseleave.ColResize").on("mouseleave.ColResize", "th", function (e) {
                     e.preventDefault();
                     that._fnMouseLeave.call(that, e, this);
                 });
@@ -391,13 +391,11 @@
              */
             "_fnMouseEnter": function (e, nTh) {
                 var that = this;
-                if(!that.s.isMousedown) {
+                if (!that.s.isMousedown) {
                     //Once the mouse has entered the cell add mouse move event to see if the mouse is over resize handle
                     $(nTh).off('mousemove.ColResizeHandle').on('mousemove.ColResizeHandle', function (e) {
-                        if (!$(e.target).is(":focus")) {
-                            e.preventDefault();
-                            that._fnResizeHandleCheck.call(that, e, nTh);
-                        }
+                        e.preventDefault();
+                        that._fnResizeHandleCheck.call(that, e, nTh);
                     });
                 }
             },
@@ -434,27 +432,25 @@
                 this.s.mouse.startY = e.pageY;
 
                 //Store the indexes of the columns the mouse is down on
-                var idx = that.dom.resizeCol[0].cellIndex;
+                var idx = parseInt(that.dom.resizeCol.attr("data-column-index"));
                 
                 // the last column has no 'right-side' neighbour
                 // with fixed this can make the table smaller
-               if (that.dom.resizeColNeighbour[0] === undefined){
+                if (that.dom.resizeColNeighbour[0] === undefined) {
                     var idxNeighbour = 0;
                 } else {
-                    var idxNeighbour = that.dom.resizeColNeighbour[0].cellIndex;
+                    var idxNeighbour = parseInt(that.dom.resizeColNeighbour.attr("data-column-index"));
                 }
-                
-               
 
                 if (idx === undefined) {
                     return;
                 }
 
                 this.s.mouse.targetIndex = idx;
-                this.s.mouse.targetColumn = this.s.dt.aoColumns[ idx ];
+                this.s.mouse.targetColumn = this.s.dt.aoColumns[idx];
 
                 this.s.mouse.neighbourIndex = idxNeighbour;
-                this.s.mouse.neighbourColumn = this.s.dt.aoColumns[ idxNeighbour ];
+                this.s.mouse.neighbourColumn = this.s.dt.aoColumns[idxNeighbour];
 
                 /* Add event handlers to the document */
                 $(document)
@@ -490,7 +486,6 @@
                 //As long as the cursor is past the handle, resize the columns
                 if ((dx > 0 && distFromRight <= 0) || (dx < 0 && distFromRight >= 0)) {
                     if (!that.s.init.tableWidthFixed) {
-                      if (!(prevWidth <= minColumnWidth && dx < 0)) {
                         //As long as the width is larger than the minimum
                         var newColWidth = Math.max(minColumnWidth, prevWidth + dx);
                         //Get the width difference (take into account the columns minimum width)
@@ -498,32 +493,22 @@
                         var colResizeIdx = parseInt(that.dom.resizeCol.attr("data-column-index"));
                         //Set datatable column widths
                         that.s.mouse.targetColumn.sWidthOrig = that.s.mouse.targetColumn.sWidth = that.s.mouse.targetColumn.width = newColWidth + "px";
-                        var domCols = $(that.s.dt.nTableWrapper).find("th[data-column-index='"+colResizeIdx+"']");
+                        var domCols = $(that.s.dt.nTableWrapper).find("th[data-column-index='" + colResizeIdx + "']");
                         //For each table expand the width by the same amount as the column
                         //This accounts for other datatable plugins like FixedColumns
-                        domCols.parents("table").each(function() {
-                            if(!$(this).parent().hasClass("DTFC_LeftBodyLiner")) {
+                        domCols.parents("table").each(function () {
+                            if (!$(this).parent().hasClass("DTFC_LeftBodyLiner")) {
                                 var newWidth = $(this).width() + widthDiff;
                                 $(this).width(newWidth);
                             } else {
-                                var newWidth =$(that.s.dt.nTableWrapper).find(".DTFC_LeftHeadWrapper").children("table").width();
+                                var newWidth = $(that.s.dt.nTableWrapper).find(".DTFC_LeftHeadWrapper").children("table").width();
                                 $(this).parents(".DTFC_LeftWrapper").width(newWidth);
-                                $(this).parent().width(newWidth+15);
+                                $(this).parent().width(newWidth + 15);
                                 $(this).width(newWidth);
                             }
                         });
                         //Apply the new width to the columns after the table has been resized
                         domCols.width(that.s.mouse.targetColumn.width);
-                        domCols.css('max-width', that.s.mouse.targetColumn.width);
-                        if (that.s.mouse.targetColumn.width) { //allow resize when table width define to be small
-                            domCols.each(function (i, th) {
-                                var domBodyCols = $(th).parents('table').find('tbody tr').find("td:eq(" + $(th).index() + ")");
-                                domBodyCols
-                                  .css('max-width', that.s.mouse.targetColumn.width)
-                                  .css('min-width', that.s.mouse.targetColumn.width);
-                            });
-                        }
-                      }
                     } else {
                         //A neighbour column must exist in order to resize a column in a table with a fixed width
                         if (that.s.mouse.neighbourColumn) {
@@ -547,7 +532,7 @@
                             var domNeighbourCols = $(that.s.dt.nTableWrapper).find("th[data-column-index='" + neighbourColResizeIdx + "']");
                             var domCols = $(that.s.dt.nTableWrapper).find("th[data-column-index='" + colResizeIdx + "']");
                             //If dx if positive (the width is getting larger) shrink the neighbour columns first
-                            if(dx>0) {
+                            if (dx > 0) {
                                 domNeighbourCols.width(that.s.mouse.neighbourColumn.width);
                                 domCols.width(that.s.mouse.targetColumn.width);
                             } else {
@@ -581,20 +566,20 @@
 
                 //If this is the first table cell
                 if ($(nTh).prev("th").length == 0) {
-                    if(this.s.init.rtl)
+                    if (this.s.init.rtl)
                         rightHandleOn = false;
                     else
                         leftHandleOn = false;
                 }
                 //If this is the last cell and the table is fixed width don't let them expand the last cell directly
                 if ($(nTh).next("th").length == 0 && this.s.init.tableWidthFixed) {
-                    if(this.s.init.rtl)
+                    if (this.s.init.rtl)
                         leftHandleOn = false;
                     else
                         rightHandleOn = false;
                 }
 
-                var resizeAvailable = leftHandleOn||rightHandleOn;
+                var resizeAvailable = leftHandleOn || rightHandleOn;
 
                 //If table is in right to left mode flip which TH is being resized
                 if (that.s.init.rtl) {
@@ -618,7 +603,7 @@
                 }
 
                 //If table width is fixed make sure both columns are resizable else just check the one.
-                if(this.s.init.tableWidthFixed)
+                if (this.s.init.tableWidthFixed)
                     resizeAvailable &= this.s.init.exclude.indexOf(parseInt($(that.dom.resizeCol).attr("data-column-index"))) == -1 && this.s.init.exclude.indexOf(parseInt($(that.dom.resizeColNeighbour).attr("data-column-index"))) == -1;
                 else
                     resizeAvailable &= this.s.init.exclude.indexOf(parseInt($(that.dom.resizeCol).attr("data-column-index"))) == -1;
@@ -645,7 +630,7 @@
                     that._fnRestoreEvents();
                     //This is to restore column sorting on click functionality
                     if (!that.s.isMousedown)
-                    //Restore click event if mouse is not down
+                        //Restore click event if mouse is not down
                         this._fnRestoreEvents("click");
                 }
             },
@@ -788,7 +773,7 @@
          *  @type      String
          *  @default   As code
          */
-        ColResize.version = "0.0.10";
+        ColResize.version = "0.0.11";
 
 
         /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -829,7 +814,7 @@
         }
 
 
-// API augmentation
+        // API augmentation
         if ($.fn.dataTable.Api) {
             $.fn.dataTable.Api.register('colResize.reset()', function () {
                 return this.iterator('table', function (ctx) {
@@ -842,18 +827,18 @@
     }; // /factory
 
 
-// Define as an AMD module if possible
-if ( typeof define === 'function' && define.amd ) {
-    define( ['jquery', 'datatables'], factory );
-}
-else if ( typeof exports === 'object' ) {
-    // Node/CommonJS
-    factory( require('jquery'), require('datatables') );
-}
-else if (jQuery && !jQuery.fn.dataTable.ColResize) {
-    // Otherwise simply initialise as normal, stopping multiple evaluation
-    factory(jQuery, jQuery.fn.dataTable);
-}
+    // Define as an AMD module if possible
+    if (typeof define === 'function' && define.amd) {
+        define(['jquery', 'datatables'], factory);
+    }
+    else if (typeof exports === 'object') {
+        // Node/CommonJS
+        factory(require('jquery'), require('datatables'));
+    }
+    else if (jQuery && !jQuery.fn.dataTable.ColResize) {
+        // Otherwise simply initialise as normal, stopping multiple evaluation
+        factory(jQuery, jQuery.fn.dataTable);
+    }
 
 
 })(window, document);
