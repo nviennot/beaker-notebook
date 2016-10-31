@@ -165,7 +165,7 @@
       // The first in the array will be used as default
       "text": ["Text", "Html", "Latex"],
       "Date": ["DateTime", "Date", "Time", "Text"],
-      "TableDisplay": ["Table", "Text"],
+      "TableDisplay": ["TableAgGrid", "Text"],
       "html": ["Html"],
       "ImageIcon": ["Image", "Text"],
       "BeakerDisplay": ["BeakerDisplay", "Text"],
