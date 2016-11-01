@@ -1212,6 +1212,11 @@
           if (_.isObject(evaluator)) delete evaluator.shellID;
         });
 
+        // apply hooks
+        if (window.beakerRegister !== undefined && window.beakerRegister.hooks !== undefined && window.beakerRegister.hooks.preSave !== undefined) {
+          notebookModelCopy = window.beakerRegister.hooks.preSave(notebookModelCopy);
+        }
+        
         // generate pretty JSON
         var prettyJson = bkUtils.toPrettyJson(notebookModelCopy);
         return prettyJson;
