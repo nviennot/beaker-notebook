@@ -30,17 +30,14 @@
       },
       link: function(scope, element, attrs, outputDisplayCtrl) {
         
-        var gridDiv = document.querySelector('#mainGrid');
-
         scope.convertRows = function(input){
+          
           var a = Date.now();
-
           var ret = [];
           for(var row = 0; row < input.length; row++){
             var rowObject = {};
             for(var element = 0; element < input.length; element++){
-              var property = scope.model.getCellModel().columnNames[element];
-              rowObject[property] = input[row][element];
+              rowObject['' + scope.columnNames[element]] = input[row][element];
             }
             ret.push(rowObject);
           }
@@ -58,18 +55,28 @@
           return ret;
         }
         
-        var gridOptions = {
-            rowDeselection: true,
-            enableColResize: true,
-            enableFilter: true,
-            enableSorting: true,
-            columnDefs: scope.convertColumns(scope.model.getCellModel().columnNames)
-            ,
-            rowData: scope.convertRows(scope.model.getCellModel().values)
-        };
+        scope.init = function() {
+          scope.gridDiv = document.querySelector('#mainGrid');
+          
+          scope.columnNames = scope.model.getCellModel().columnNames;
+          scope.types = scope.model.getCellModel().types;
+          scope.values = scope.model.getCellModel().values;
+          scope.convertedColumns = scope.convertColumns(scope.columnNames);
+          scope.convertedRows = scope.convertRows(scope.values);
 
-        new agGrid.Grid(gridDiv, gridOptions);
+          var gridOptions = {
+              rowDeselection: true,
+              enableColResize: true,
+              enableFilter: true,
+              enableSorting: true,
+              columnDefs: scope.convertedColumns,
+              rowData: scope.convertedRows
+          };
 
+          new agGrid.Grid(scope.gridDiv, gridOptions);
+        }
+        
+        scope.init();
 
         //scope.model.getCellModel().columnNames;
         //scope.model.getCellModel().types;
