@@ -36,7 +36,7 @@
           var ret = [];
           for(var row = 0; row < input.length; row++){
             var rowObject = {};
-            for(var element = 0; element < input.length; element++){
+            for(var element = 0; element < scope.columnNames.length; element++){
               rowObject['' + scope.columnNames[element]] = input[row][element];
             }
             ret.push(rowObject);
@@ -77,14 +77,6 @@
         }
         
         scope.init();
-
-        //scope.model.getCellModel().columnNames;
-        //scope.model.getCellModel().types;
-        //scope.model.getCellModel().values;
-        
-        
-
-        
       }
     };
   }]);
