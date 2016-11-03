@@ -30,27 +30,54 @@
       },
       link: function(scope, element, attrs, outputDisplayCtrl) {
         
-        
         var gridDiv = document.querySelector('#mainGrid');
 
+        scope.convertRows = function(input){
+          var a = Date.now();
+
+          var ret = [];
+          for(var row = 0; row < input.length; row++){
+            var rowObject = {};
+            for(var element = 0; element < input.length; element++){
+              var property = scope.model.getCellModel().columnNames[element];
+              rowObject[property] = input[row][element];
+            }
+            ret.push(rowObject);
+          }
+          
+          var b = Date.now();
+          console.log("convert time = " + (b-a)/1000 );
+          return ret;
+        }
+        
+        scope.convertColumns = function(input){
+          var ret = [];
+          for(var i = 0; i < input.length; i++){
+            ret.push({headerName: input[i], field: input[i]});
+          }
+          return ret;
+        }
+        
         var gridOptions = {
-            columnDefs: [
-                {headerName: 'Name', field: 'name'},
-                {headerName: 'Role', field: 'role'}
-            ],
-            rowData: [
-                {name: 'Niall', role: 'Developer'},
-                {name: 'Eamon', role: 'Manager'},
-                {name: 'Brian', role: 'Musician'},
-                {name: 'Kevin', role: 'Manager'}
-            ]
+            rowDeselection: true,
+            enableColResize: true,
+            enableFilter: true,
+            enableSorting: true,
+            columnDefs: scope.convertColumns(scope.model.getCellModel().columnNames)
+            ,
+            rowData: scope.convertRows(scope.model.getCellModel().values)
         };
 
         new agGrid.Grid(gridDiv, gridOptions);
+
+
+        //scope.model.getCellModel().columnNames;
+        //scope.model.getCellModel().types;
+        //scope.model.getCellModel().values;
         
-/*        $scope.getCellModel()*/
+        
 
-
+        
       }
     };
   }]);
