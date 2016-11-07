@@ -60,22 +60,46 @@
           scope.convertedRows = scope.convertRows(scope.values);
 
           var gridOptions = {
+              suppressHorizontalScroll: true,
               rowDeselection: true,
               enableColResize: true,
               enableFilter: true,
               enableSorting: true,
               columnDefs: scope.convertedColumns,
               rowData: scope.convertedRows,
+              onColumnResized: function(event) { 
+
+                
+                ///REMOVE duplicated code
+                var width = 0;
+                gridOptions.columnApi.getAllDisplayedColumns().forEach( function(col) {
+                  width += col.actualWidth;
+                });
+
+                
+                $('#mainGrid').width(width + 10);
+              
+              },
           };
           new agGrid.Grid(scope.gridDiv, gridOptions);
           
           //gridOptions.api.sizeColumnsToFit();
-          
           var allColumnIds = [];
           scope.columnNames.forEach( function(columnDef) {
               allColumnIds.push(columnDef);
           });
           gridOptions.columnApi.autoSizeColumns(allColumnIds);
+          
+          var width = 0;
+          gridOptions.columnApi.getAllDisplayedColumns().forEach( function(col) {
+            width += col.actualWidth;
+          });
+
+          
+          $('#mainGrid').width(width + 10);
+          
+          //console.log(width);
+          
         }
         
         scope.init();
