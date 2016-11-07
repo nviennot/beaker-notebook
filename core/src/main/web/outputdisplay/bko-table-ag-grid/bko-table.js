@@ -18,7 +18,7 @@
  */
 (function() {
   'use strict';
-  beakerRegister.bkoDirective("TableAgGrid", ["$interval", "$compile", "$rootScope", "bkEvaluateJobManager", "bkUtils",
+  beakerRegister.bkoDirective("NewTable", ["$interval", "$compile", "$rootScope", "bkEvaluateJobManager", "bkUtils",
     "bkNotificationService", "bkOutputDisplayFactory", "bkSparkContextManager",
     function(
       $interval, $compile, $rootScope, bkEvaluateJobManager, bkUtils, bkNotificationService,
@@ -31,8 +31,6 @@
       link: function(scope, element, attrs, outputDisplayCtrl) {
         
         scope.convertRows = function(input){
-          
-          var a = Date.now();
           var ret = [];
           for(var row = 0; row < input.length; row++){
             var rowObject = {};
@@ -41,9 +39,6 @@
             }
             ret.push(rowObject);
           }
-          
-          var b = Date.now();
-          console.log("convert time = " + (b-a)/1000 );
           return ret;
         }
         
@@ -54,7 +49,7 @@
           }
           return ret;
         }
-        
+
         scope.init = function() {
           scope.gridDiv = document.querySelector('#mainGrid');
           
@@ -70,10 +65,17 @@
               enableFilter: true,
               enableSorting: true,
               columnDefs: scope.convertedColumns,
-              rowData: scope.convertedRows
+              rowData: scope.convertedRows,
           };
-
           new agGrid.Grid(scope.gridDiv, gridOptions);
+          
+          //gridOptions.api.sizeColumnsToFit();
+          
+          var allColumnIds = [];
+          scope.columnNames.forEach( function(columnDef) {
+              allColumnIds.push(columnDef);
+          });
+          gridOptions.columnApi.autoSizeColumns(allColumnIds);
         }
         
         scope.init();

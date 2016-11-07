@@ -471,7 +471,7 @@
         beakerObj.setupBeakerObject({});
         beakerObj.notebookToBeakerObject();
         var beaker = beakerObj.beakerObj;
-        beaker.prefs = {useOutputPanel: false, outputLineLimit: 1000, outputColumnLimit: 50};
+        beaker.prefs = {useOutputPanel: false, outputLineLimit: 1000, outputColumnLimit: 50, newTableRowLimit : 5000};
         beaker.client = {
           mac: navigator.appVersion.indexOf("Mac") != -1,
           windows: navigator.appVersion.indexOf("Win") != -1,

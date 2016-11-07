@@ -165,7 +165,7 @@
       // The first in the array will be used as default
       "text": ["Text", "Html", "Latex"],
       "Date": ["DateTime", "Date", "Time", "Text"],
-      "TableDisplay": ["TableAgGrid", "Text"],
+      "TableDisplay": ["Table", "NewTable", "Text"],//change default value in "getApplicableDisplays"
       "html": ["Html"],
       "ImageIcon": ["Image", "Text"],
       "BeakerDisplay": ["BeakerDisplay", "Text"],
@@ -185,6 +185,7 @@
       "TreeMap": ["Plot", "Text"],
       "Plotly": ["Plotly", "Text"]
     };
+    
     var factory = {
       add: function(type, impl) {
         if (types.length > MAX_CAPACITY) {
@@ -257,13 +258,21 @@
             return ret;
           }
           if (resultType2DisplayTypesMap.hasOwnProperty(result.type)) {
-            return resultType2DisplayTypesMap[result.type];
+            var output = resultType2DisplayTypesMap[result.type];  
+            if(result.type === 'TableDisplay'){
+              if(bkHelper.getBeakerObject().beakerObj.prefs.newTableRowLimit < result.values.length){
+                output = [output[1], output[0], output[2]];
+              }
+            }
+            return output;
           } else {
             return ["Text"];
           }
         };
       })()
     };
+    
+    
     beakerRegister.outputDisplayFactory = factory;
     for (var key in beakerRegister.toBeAddedToOutputDisplayFactory) {
       beakerRegister.outputDisplayFactory.add(key, beakerRegister.toBeAddedToOutputDisplayFactory[key]);
