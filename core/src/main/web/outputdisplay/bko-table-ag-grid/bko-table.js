@@ -27,82 +27,86 @@
       template: JST['bko-table-ag-grid/bko-table'],
       require: '^bkOutputDisplay',
       controller: function($scope, $uibModal) {
-      },
-      link: function(scope, element, attrs, outputDisplayCtrl) {
         
-        scope.convertRows = function(input){
+        var convertRows = function(input){
           var ret = [];
           for(var row = 0; row < input.length; row++){
             var rowObject = {};
-            for(var element = 0; element < scope.columnNames.length; element++){
-              rowObject['' + scope.columnNames[element]] = input[row][element];
+            for(var element = 0; element < $scope.columnNames.length; element++){
+              rowObject['' + $scope.columnNames[element]] = input[row][element];
             }
             ret.push(rowObject);
           }
           return ret;
         }
-        
-        scope.convertColumns = function(input){
+
+        var convertColumns = function(input){
           var ret = [];
           for(var i = 0; i < input.length; i++){
             ret.push({headerName: input[i], field: input[i]});
           }
           return ret;
         }
+        
+        var fitTableToCollumns = function(){
+          var width = 0;
+          $scope.gridOptions.columnApi.getAllDisplayedColumns().forEach( function(col) {
+            width += col.actualWidth;
+          });
+          setTimeout(function(){//wait for document ready
+            var tableDiv = document.getElementById($scope.id);
+            tableDiv.style.width = (width + 10) + 'px'; //TODO 10 is width of scroll, replace with real
+          }, 0);
+        }
+        
+        var onGridReady = function(){
+          console.log('onGridReady'); //TODO delete , need to understand how often its called.
+          var allColumnIds = [];
+          $scope.columnNames.forEach( function(columnDef) {
+              allColumnIds.push(columnDef);
+          });
+          $scope.gridOptions.columnApi.autoSizeColumns(allColumnIds);
+        }
+        
+        //TODO delete if not used
+        var softApplay = function(){
+          if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+            $scope.$apply();
+          }
+        }
 
-        scope.init = function() {
-          scope.gridDiv = document.querySelector('#mainGrid');
+        $scope.init = function() {
           
-          scope.columnNames = scope.model.getCellModel().columnNames;
-          scope.types = scope.model.getCellModel().types;
-          scope.values = scope.model.getCellModel().values;
-          scope.convertedColumns = scope.convertColumns(scope.columnNames);
-          scope.convertedRows = scope.convertRows(scope.values);
+          $scope.id = 'table_' + bkUtils.generateId(6);
+  
+          $scope.columnNames = $scope.model.getCellModel().columnNames;
+          $scope.types = $scope.model.getCellModel().types;
+          $scope.values = $scope.model.getCellModel().values;
+          
+          $scope.convertedColumns = convertColumns($scope.columnNames);
+          $scope.convertedRows = convertRows($scope.values);
 
-          var gridOptions = {
+          $scope.gridOptions = {
               suppressHorizontalScroll: true,
               rowDeselection: true,
               enableColResize: true,
               enableFilter: true,
               enableSorting: true,
-              columnDefs: scope.convertedColumns,
-              rowData: scope.convertedRows,
-              onColumnResized: function(event) { 
+              columnDefs: $scope.convertedColumns,
+              rowData: $scope.convertedRows,
+              onColumnResized: fitTableToCollumns,
+              onGridReady: onGridReady,
+          };      
 
-                
-                ///REMOVE duplicated code
-                var width = 0;
-                gridOptions.columnApi.getAllDisplayedColumns().forEach( function(col) {
-                  width += col.actualWidth;
-                });
-
-                
-                $('#mainGrid').width(width + 10);
-              
-              },
-          };
-          new agGrid.Grid(scope.gridDiv, gridOptions);
-          
-          //gridOptions.api.sizeColumnsToFit();
-          var allColumnIds = [];
-          scope.columnNames.forEach( function(columnDef) {
-              allColumnIds.push(columnDef);
-          });
-          gridOptions.columnApi.autoSizeColumns(allColumnIds);
-          
-          var width = 0;
-          gridOptions.columnApi.getAllDisplayedColumns().forEach( function(col) {
-            width += col.actualWidth;
-          });
-
-          
-          $('#mainGrid').width(width + 10);
-          
-          //console.log(width);
-          
         }
         
-        scope.init();
+        
+        $scope.init();
+
+      },
+      link: function(scope, element, attrs, outputDisplayCtrl) {
+
+
       }
     };
   }]);

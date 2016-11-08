@@ -19,5 +19,7 @@
  */
 (function() {
   "use strict";
-  var module = angular.module('bk.outputDisplay', ['bk.utils',  'ngAnimate', 'ngTouch']);
+  agGrid.initialiseAgGridWithAngular1(angular);
+
+  var module = angular.module('bk.outputDisplay', ['bk.utils', 'ngAnimate', 'ngTouch', 'agGrid' ]);
 })();
