@@ -68,6 +68,19 @@
           $scope.gridOptions.columnApi.autoSizeColumns(allColumnIds);
         }
         
+        $scope.agClass = function (){
+          var ret = "ag-fresh";
+          switch(bkHelper.getTheme().toUpperCase()){
+            case 'DEFAULT':
+              ret = "ag-fresh";
+            break;
+            case 'AMBIANCE':
+              ret = "ag-dark";
+            break;
+          }
+          return ret;
+        }
+        
         //TODO delete if not used
         var softApplay = function(){
           if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
@@ -99,8 +112,7 @@
           };      
 
         }
-        
-        
+ 
         $scope.init();
 
       },
