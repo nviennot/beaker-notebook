@@ -43,7 +43,7 @@
         var convertColumns = function(input){
           var ret = [];
           for(var i = 0; i < input.length; i++){
-            ret.push({headerName: input[i], field: input[i]});
+            ret.push({headerName: '' + input[i], field: '' + input[i]});
           }
           return ret;
         }
