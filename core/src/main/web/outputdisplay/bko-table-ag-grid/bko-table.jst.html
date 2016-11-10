@@ -17,5 +17,7 @@
 <div>
   <br>
   <br>
-  <div id="{{id}}" ag-grid="gridOptions" class="{{agClass()}}" style="height: 200px;"></div>
+  <div id="{{id_parent}}">
+    <div id="{{id}}" ag-grid="gridOptions" class="{{agClass()}}" style=" height: {{getTableHeight()+'px'}}; "></div>
+  </div>
 </div>

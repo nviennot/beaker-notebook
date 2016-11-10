@@ -28,6 +28,34 @@
       require: '^bkOutputDisplay',
       controller: function($scope, $uibModal) {
         
+        var getVerticalScrollBarWidth = function(){
+          return 12;//TODO replace with real
+        }
+        
+        var getHorizantalScrollBarWidth = function(){
+          return 12;//TODO replace with real
+        }
+        
+        var getRowHeight = function(){
+          return 25;
+        }
+        
+        var getHeaderHeight = function(){
+          return 25;
+        }
+        
+        $scope.getRowCountToShow = function(){
+          return 20;//TODO replace with user menu 
+        }
+        
+        $scope.getActualRowCountToShow = function(){
+          var rowCount = $scope.getRowCountToShow();
+          if($scope.values.length < rowCount){
+            rowCount = $scope.values.length;
+          }
+          return rowCount;
+        }
+        
         var convertRows = function(input){
           var ret = [];
           for(var row = 0; row < input.length; row++){
@@ -49,18 +77,25 @@
         }
         
         var fitTableToCollumns = function(){
-          var width = 0;
-          $scope.gridOptions.columnApi.getAllDisplayedColumns().forEach( function(col) {
-            width += col.actualWidth;
-          });
           setTimeout(function(){//wait for document ready
-            var tableDiv = document.getElementById($scope.id);
-            tableDiv.style.width = (width + 10) + 'px'; //TODO 10 is width of scroll, replace with real
+            
+            var width = 0;
+            $scope.gridOptions.columnApi.getAllDisplayedColumns().forEach( function(col) {
+              width += col.actualWidth;
+            });
+
+            //if($scope.getActualRowCountToShow() > $scope.getRowCountToShow()){
+            width += getVerticalScrollBarWidth();
+
+            var tableParentDiv = document.getElementById($scope.id_parent);
+            
+            if(tableParentDiv.offsetWidth >= width){
+              document.getElementById($scope.id).style.width = width + 'px';
+            }
           }, 0);
         }
-        
+
         var onGridReady = function(){
-          console.log('onGridReady'); //TODO delete , need to understand how often its called.
           var allColumnIds = [];
           $scope.columnNames.forEach( function(columnDef) {
               allColumnIds.push(columnDef);
@@ -80,17 +115,27 @@
           }
           return ret;
         }
-        
-        //TODO delete if not used
-        var softApplay = function(){
-          if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
-            $scope.$apply();
-          }
+
+        $scope.getTableHeight = function(){
+          var ret = $scope.getActualRowCountToShow() * getRowHeight() + getHeaderHeight() + 2 + 3; //borders
+
+/*          var width = 0;
+          $scope.gridOptions.columnApi.getAllDisplayedColumns().forEach( function(col) {
+            width += col.actualWidth;
+          });
+          width += getVerticalScrollBarWidth();
+          var tableParentDiv = document.getElementById($scope.id_parent);
+          
+          if(tableParentDiv.offsetWidth < width){
+            ret += getHorizantalScrollBarWidth();
+          }*/
+          return ret;
         }
 
         $scope.init = function() {
           
           $scope.id = 'table_' + bkUtils.generateId(6);
+          $scope.id_parent = $scope.id + '_parent';
   
           $scope.columnNames = $scope.model.getCellModel().columnNames;
           $scope.types = $scope.model.getCellModel().types;
@@ -100,7 +145,9 @@
           $scope.convertedRows = convertRows($scope.values);
 
           $scope.gridOptions = {
-              suppressHorizontalScroll: true,
+              //suppressHorizontalScroll: true,
+              headerHeight: getHeaderHeight(),
+              rowHeight: getRowHeight(),
               rowDeselection: true,
               enableColResize: true,
               enableFilter: true,
