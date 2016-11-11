@@ -36,7 +36,6 @@ describe('Catalog of Plot APIs and Features', function () {
     var idCell = "codeH2ee1d";
     beakerPO.scrollToBkCellByIdCell(idCell);
     beakerPO.clickCodeCellInputButtonByIdCell(idCell, 'Plot');
-    beakerPO.checkPlotIsPresentByIdCell(idCell);
 
     expect(beakerPO.getCodeCellOutputContainerTitleByIdCell(idCell)).toBe("We Will Control the Title");
     expect(beakerPO.getCodeCellOutputContainerYLabelByIdCell(idCell)).toBe("Vertical");
@@ -47,7 +46,7 @@ describe('Catalog of Plot APIs and Features', function () {
     var idCell = "codeXtjWnc";
     beakerPO.scrollToBkCellByIdCell(idCell);
     beakerPO.clickCodeCellInputButtonByIdCell(idCell, 'Plot');
-    beakerPO.checkPlotIsPresentByIdCell(idCell);
+
     expect(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 0).element(by.tagName('circle')).isPresent()).toBe(true);
   });
 
@@ -55,7 +54,7 @@ describe('Catalog of Plot APIs and Features', function () {
     var idCell = "code4NJX5d";
     beakerPO.scrollToBkCellByIdCell(idCell);
     beakerPO.clickCodeCellInputButtonByIdCell(idCell, 'Plot');
-    beakerPO.checkPlotIsPresentByIdCell(idCell);
+
     expect(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 0).element(by.tagName('line')).isPresent()).toBe(true);
   });
 
@@ -63,7 +62,7 @@ describe('Catalog of Plot APIs and Features', function () {
     var idCell = "codefbZDMO";
     beakerPO.scrollToBkCellByIdCell(idCell);
     beakerPO.clickCodeCellInputButtonByIdCell(idCell, 'Plot');
-    beakerPO.checkPlotIsPresentByIdCell(idCell);
+
     beakerPO.checkClass(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 0), 'plot-bar');
     expect(beakerPO.getCodeCellOutputContainerTitleByIdCell(idCell)).toBe("Bars");
   });
@@ -72,7 +71,7 @@ describe('Catalog of Plot APIs and Features', function () {
     var idCell = "codeSb2uCM";
     beakerPO.scrollToBkCellByIdCell(idCell);
     beakerPO.clickCodeCellInputButtonByIdCell(idCell, 'Plot');
-    beakerPO.checkPlotIsPresentByIdCell(idCell);
+
     beakerPO.checkClass(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 0), 'plot-point');
     beakerPO.checkClass(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 1), 'plot-point');
     beakerPO.checkClass(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 2), 'plot-point');
@@ -84,7 +83,7 @@ describe('Catalog of Plot APIs and Features', function () {
     var idCell = "codeZ7NCfO";
     beakerPO.scrollToBkCellByIdCell(idCell);
     beakerPO.clickCodeCellInputButtonByIdCell(idCell, 'Plot');
-    beakerPO.checkPlotIsPresentByIdCell(idCell);
+
     expect(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 0).element(by.tagName('polygon')).isPresent()).toBe(true);
     expect(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 1).element(by.tagName('polygon')).isPresent()).toBe(true);
   });
@@ -94,7 +93,6 @@ describe('Catalog of Plot APIs and Features', function () {
     beakerPO.scrollToBkCellByIdCell(idCell);
     beakerPO.clickCodeCellInputButtonByIdCell(idCell, 'Plot');
     beakerPO.scrollToCodeCellOutputByIdCell(idCell);
-    beakerPO.checkPlotIsPresentByIdCell(idCell);
 
     expect(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 0).element(by.tagName('circle')).isPresent()).toBe(true);
     beakerPO.checkClass(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 1), 'plot-constline');
@@ -107,7 +105,6 @@ describe('Catalog of Plot APIs and Features', function () {
     var idCell = "codeK6Nb0u";
     beakerPO.scrollToBkCellByIdCell(idCell);
     beakerPO.clickCodeCellInputButtonByIdCell(idCell, 'Plot');
-    beakerPO.checkPlotIsPresentByIdCell(idCell);
 
     expect(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 0).element(by.tagName('circle')).isPresent()).toBe(true);
     beakerPO.checkClass(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 1), 'plot-constband');
@@ -119,7 +116,6 @@ describe('Catalog of Plot APIs and Features', function () {
     var idCell = "code3AqAel";
     beakerPO.scrollToBkCellByIdCell(idCell);
     beakerPO.clickCodeCellInputButtonByIdCell(idCell, 'Plot');
-    beakerPO.checkPlotIsPresentByIdCell(idCell);
 
     expect(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 0).element(by.tagName('circle')).isPresent()).toBe(true);
     beakerPO.checkClass(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 1), 'plot-point');
@@ -143,7 +139,6 @@ describe('Catalog of Plot APIs and Features', function () {
     var idCell = "codePvwIFC";
     beakerPO.scrollToBkCellByIdCell(idCell);
     beakerPO.clickCodeCellInputButtonByIdCell(idCell, 'Plot');
-    beakerPO.checkPlotIsPresentByIdCell(idCell);
     beakerPO.checkLegendIsPresentByIdCell(idCell);
 
     beakerPO.checkClass(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 0), 'plot-point');
@@ -158,7 +153,6 @@ describe('Catalog of Plot APIs and Features', function () {
     var idCell = "codeZgVAtF";
     beakerPO.scrollToBkCellByIdCell(idCell);
     beakerPO.clickCodeCellInputButtonByIdCell(idCell, 'Plot');
-    beakerPO.checkPlotIsPresentByIdCell(idCell);
     beakerPO.checkLegendIsPresentByIdCell(idCell);
 
     expect(beakerPO.getCodeCellOutputContainerYLabelByIdCell(idCell)).toBe("Interest Rates");
@@ -191,7 +185,7 @@ describe('Catalog of Plot APIs and Features', function () {
     var idCell = "codekBlglo";
     beakerPO.scrollToBkCellByIdCell(idCell);
     beakerPO.clickCodeCellInputButtonByIdCell(idCell, 'Plot');
-    beakerPO.checkPlotIsPresentByIdCell(idCell);
+
     beakerPO.checkLegendIsPresentByIdCell(idCell);
     beakerPO.checkClass(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 0), 'plot-point');
     beakerPO.checkClass(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 1), 'plot-point');
@@ -201,7 +195,7 @@ describe('Catalog of Plot APIs and Features', function () {
     var idCell = "codecHXmVR";
     beakerPO.scrollToBkCellByIdCell(idCell);
     beakerPO.clickCodeCellInputButtonByIdCell(idCell, 'Plot');
-    beakerPO.checkPlotIsPresentByIdCell(idCell);
+
     beakerPO.checkClass(beakerPO.getPlotSvgElementByIndexByIdCell(idCell, 0, 0), 'plot-point');
   });
 
