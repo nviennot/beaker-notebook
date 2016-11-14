@@ -57,6 +57,19 @@
         $scope.getRowCountToShow = function(){
           return 20;//TODO replace with user menu 
         }
+        
+        $scope.agClass = function (){
+          var ret = "ag-fresh";
+          switch(bkHelper.getTheme().toUpperCase()){
+            case 'DEFAULT':
+              ret = "ag-fresh";
+            break;
+            case 'AMBIANCE':
+              ret = "ag-dark";
+            break;
+          }
+          return ret;
+        }
 
         $scope.getActualRowCountToShow = function(){
           var rowCount = $scope.getRowCountToShow();
@@ -113,20 +126,7 @@
             }
           }, 0);
         }
-        
-        $scope.agClass = function (){
-          var ret = "ag-fresh";
-          switch(bkHelper.getTheme().toUpperCase()){
-            case 'DEFAULT':
-              ret = "ag-fresh";
-            break;
-            case 'AMBIANCE':
-              ret = "ag-dark";
-            break;
-          }
-          return ret;
-        }
-        
+
         var setTableHeight = function(){
           setTimeout(function(){//wait for document ready
             var width = 0;
@@ -186,9 +186,11 @@
               onGridReady: onGridReady,
           };
           
-          $(window).bind('resize.' + $scope.id, function () {
-            onPageResized();
+          $scope.$on('$destroy', function() {
+            $(window).off('resize.' + $scope.id, onPageResized);
           });
+          
+          $(window).on('resize.' + $scope.id, onPageResized);
         }
 
         $scope.init();
