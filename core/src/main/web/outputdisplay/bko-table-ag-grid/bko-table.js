@@ -113,20 +113,6 @@
             }
           }, 0);
         }
-
-        var onGridReady = function(){
-          var allColumnIds = [];
-          $scope.columnNames.forEach( function(columnDef) {
-              allColumnIds.push(columnDef);
-          });
-          $scope.gridOptions.columnApi.autoSizeColumns(allColumnIds);
-          setTableHeight();
-        }
-        
-        var onPageResized = function(){
-          setTableHeight();
-          setTableWidth();
-        }
         
         $scope.agClass = function (){
           var ret = "ag-fresh";
@@ -158,6 +144,20 @@
             document.getElementById($scope.id).style.height = ret + 'px';
             
           }, 0);
+        }
+        
+        var onGridReady = function(){
+          var allColumnIds = [];
+          $scope.columnNames.forEach( function(columnDef) {
+              allColumnIds.push(columnDef);
+          });
+          $scope.gridOptions.columnApi.autoSizeColumns(allColumnIds);
+          setTableHeight();
+        }
+        
+        var onPageResized = function(){
+          setTableWidth();
+          setTableHeight();
         }
 
         $scope.init = function() {
