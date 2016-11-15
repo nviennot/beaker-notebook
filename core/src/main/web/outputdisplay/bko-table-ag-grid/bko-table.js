@@ -91,16 +91,22 @@
           return ret;
         }
 
-        var convertColumns = function(input){
+        var convertColumns = function(collumns, values){
           var ret = [];
-          for(var i = 0; i < input.length; i++){
+          for(var i = 0; i < collumns.length; i++){
             var retItem = {
-                headerName: '' + input[i],
-                field: '' + input[i],
+                headerName: '' + collumns[i],
+                field: '' + collumns[i],
             };
-            if($scope.types[i] == 'datetime'){
-              retItem.cellRenderer = function (params) {
-                return bkUtils.formatTimestamp(params.value.timestamp, null, TIME_UNIT_FORMATS.DATETIME.format);
+            if(($scope.types && $scope.types[i] === 'datetime') || ((values && values[0] && values[0][i] && _.isObject(values[0][i]) && values[0][i].type === 'Date'))){
+              if(_.isObject(values[0][i])){
+                retItem.cellRenderer = function (params) {
+                  return bkUtils.formatTimestamp(params.value.timestamp, null, TIME_UNIT_FORMATS.DATETIME.format);
+                }
+              }else{
+                retItem.cellRenderer = function (params) {
+                  return bkUtils.formatTimestamp(params.value, null, TIME_UNIT_FORMATS.DATETIME.format);
+                }
               }
             }
             ret.push(retItem);
@@ -169,7 +175,7 @@
           $scope.types = $scope.model.getCellModel().types;
           $scope.values = $scope.model.getCellModel().values;
           
-          $scope.convertedColumns = convertColumns($scope.columnNames);
+          $scope.convertedColumns = convertColumns($scope.columnNames, $scope.values);
           $scope.convertedRows = convertRows($scope.values);
 
           $scope.gridOptions = {
