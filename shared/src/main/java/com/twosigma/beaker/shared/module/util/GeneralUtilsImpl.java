@@ -19,6 +19,8 @@ package com.twosigma.beaker.shared.module.util;
 import org.apache.cxf.helpers.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.nio.file.FileSystems;
+import java.util.HashSet;
 
 import java.io.File;
 import java.io.IOException;
@@ -263,15 +265,44 @@ public class GeneralUtilsImpl implements GeneralUtils {
     setPermissions(castToPath(path), perms);
   }
 
+  private boolean isHavePermission(PosixFilePermission toCheck, Set<PosixFilePermission> avaliblePermissions){
+    boolean ret = false;
+    for (PosixFilePermission perm : avaliblePermissions) {
+      ret = toCheck.equals(perm);
+      if(ret){
+        break;
+      }
+    }
+    return ret;
+  }
+  
   @Override
   public void setPermissions(Path path, PosixFilePermission... perms) throws IOException {
     try {
-      Files.setPosixFilePermissions(path, new HashSet<>(Arrays.asList(perms)));
+      
+      boolean isPosix = FileSystems.getDefault().supportedFileAttributeViews().contains("posix");
+      if(isPosix){
+        Set<PosixFilePermission> avaliblePermissions = Files.getPosixFilePermissions(path);
+        Set<PosixFilePermission> permsToSet = new HashSet<PosixFilePermission>();
+        
+        for (PosixFilePermission permToSet : perms) {
+          if(isHavePermission(permToSet, avaliblePermissions)){
+            permsToSet.add(permToSet);
+          }else{
+            LOGGER.info("WARNINW unable to set file permissions: " + permToSet +  "to path : \"" + path + "\" ");
+          }
+        }
+        
+        Files.setPosixFilePermissions(path, permsToSet);
+      }
+      
     } catch (UnsupportedOperationException e) {
       LOGGER.info("ERROR setting file permissions: file system does not support the " +
         "PosixFileAttributeView");
     }
   }
+  
+  
 
   @Override
   public void setPermissions(File file, PosixFilePermission... perms) throws IOException {
