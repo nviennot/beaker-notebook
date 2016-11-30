@@ -22,19 +22,19 @@ import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.nio.file.FileSystems;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
+import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
 
+import groovy.lang.*;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
+import org.codehaus.groovy.reflection.CachedClass;
 import org.codehaus.groovy.runtime.StackTraceUtils;
 
 import com.twosigma.beaker.NamespaceClient;
@@ -46,9 +46,8 @@ import com.twosigma.beaker.jvm.threads.BeakerCellExecutor;
 import com.twosigma.beaker.jvm.threads.BeakerStdOutErrHandler;
 import com.twosigma.beaker.jvm.utils.BeakerPrefsUtils;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.Script;
+import org.codehaus.groovy.runtime.m12n.ExtensionModuleScanner;
+import org.codehaus.groovy.runtime.metaclass.MetaClassRegistryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -378,7 +377,6 @@ public void evaluate(SimpleEvaluationObject seo, String code) {
           }
 
           instance.setBinding(scriptBinding);
-          
           result = instance.run();
 
           if(LOCAL_DEV) {
@@ -422,7 +420,7 @@ public void evaluate(SimpleEvaluationObject seo, String code) {
       return loader;
     }
 
-    protected void newEvaluator() throws MalformedURLException
+    protected void newEvaluator() throws IOException
     {
     
       try {
@@ -484,8 +482,28 @@ public void evaluate(SimpleEvaluationObject seo, String code) {
         
       //reload classloader
       groovyClassLoader = new GroovyClassLoader(newClassLoader(), compilerConfiguration);
+
+      registerGroovyExtensions(groovyClassLoader, classPath);
+
       scriptBinding = new Binding();
-          
+    }
+  }
+
+  private void registerGroovyExtensions(final GroovyClassLoader classLoader, final List<String> classPath) throws IOException {
+    for (String cp : classPath) {
+      JarFile jar = new JarFile(cp);
+      ZipEntry entry = jar.getEntry(ExtensionModuleScanner.MODULE_META_INF_FILE);
+      if (entry != null) {
+        Properties props = new Properties();
+        props.load(jar.getInputStream(entry));
+        Map<CachedClass, List<MetaMethod>> metaMethods = new HashMap<>();
+
+        ((MetaClassRegistryImpl) GroovySystem.getMetaClassRegistry()).registerExtensionModuleFromProperties(props, classLoader, metaMethods);
+        for (Map.Entry<CachedClass, List<MetaMethod>> metaMethod : metaMethods.entrySet()) {
+          final CachedClass c = metaMethod.getKey();
+          c.addNewMopMethods(metaMethod.getValue());
+        }
+      }
     }
   }
 
