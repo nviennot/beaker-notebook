@@ -109,7 +109,7 @@ define(function(require, exports, module) {
         });
       },
       locked: function() {
-        return window.beakerRegister.isPublished === true;
+        return window.beakerRegister.isPublished === true || window.beakerRegister.canPublish === false;
       }
     },
     {
@@ -123,7 +123,7 @@ define(function(require, exports, module) {
         });
       },
       locked: function() {
-        return window.beakerRegister.isPublished !== true;
+        return window.beakerRegister.isPublished !== true || window.beakerRegister.canPublish === false;
       }
     },
     {
@@ -136,7 +136,7 @@ define(function(require, exports, module) {
         });
       },
       locked: function() {
-        return window.beakerRegister.isPublished !== true;
+        return window.beakerRegister.isPublished !== true || window.beakerRegister.canPublish === false;
       }
     },
     {
