@@ -15,7 +15,7 @@
  */
 (function() {
   "use strict";
-    
+
   window.beakerRegister.postHelperHooks = [];
   window.beakerRegister.isEmbedded = true;
   window.beakerRegister.disablePluginLoadFromUrl = true;
@@ -25,7 +25,7 @@
   window.beakerRegister.hooks.evaluate = function(a,d) {
     bkHelper.getBeakerObject().beakerObj.beakerLab = window.beakerRegister.bunsenObject;
   };
-  
+
   window.beakerRegister.hooks.edited = function(edited) {
     // inform beakerLab about edited flag
     parent.$(parent.document).trigger('beaker.embedded.notebookChanged', [window.beakerRegister.bunsenNotebookId, edited]);
@@ -72,15 +72,44 @@
     $(cm.display.sizer).on('beaker.embedded.dropItem', function (e, d) {
       e.preventDefault();
       e.stopPropagation();
+
+      var droppedPath;
+      var pathToFile = d.payload.replace(window.beakerRegister.bunsenObject.notebookProject, '');
+      pathToFile = pathToFile.replace(/\/{2,}/g,'');
+      if (cm.doc.mode.name === 'javascript'){
+        droppedPath = window.beakerRegister.bunsenObject.storageServicePath + pathToFile;
+      } else {
+        droppedPath = window.beakerRegister.bunsenObject.storageFilePath + pathToFile;
+      }
+      var quotes = window.beakerRegister.getCodeCellTypes()[cm.doc.mode.name].quotes;
+      quotes = quotes.replace('^\"|\"$", "');
+      droppedPath = quotes + droppedPath + quotes;
+
       var display = cmm.display;
       var x, y, space = display.lineSpace.getBoundingClientRect();
       try { x = e.clientX - space.left; y = e.clientY - space.top; }
       catch (e) { return; }
       var pos =  cm.coordsChar({left: x, top: y}, "div");
       cm.setSelection(cm.clipPos(pos));
-      cm.replaceSelection(d.payload);
+      cm.replaceSelection(droppedPath);
     });
   };
+  window.beakerRegister.getCodeCellTypes = function() {
+      return {
+        'clike': {quotes: '\"'},
+        'clojure': {quotes: '\"'},
+        'groovy': {quotes: '\"'},
+        'smartHTMLMode': {quotes: ''},
+        'python': {quotes: '\''},
+        'IRuby': {quotes: '\"'},
+        'javascript': {quotes: '\"'},
+        'julia': {quotes: '\"'},
+        'r': {quotes: '\''},
+        'sql': {quotes: '\''},
+        'stex': {quotes: '\''},
+        'lua': {quotes: '\''}
+      };
+    };
   window.beakerRegister.hooks.preSave = function(nb) {
     if (window.beakerRegister.bunsenComment !== undefined) {
       nb.comment = window.beakerRegister.bunsenComment;
@@ -98,7 +127,7 @@
     }
   };
 
-  // beakerlab is ending some data to beaker   
+  // beakerlab is ending some data to beaker
   $('body').bind('beaker.embedded.setBeakerLabObject', function(e, notebookId, notebookName, bkLabObj, isFullScreen, canPublish, isPublished, canBlog) {
     window.beakerRegister.notebookName = notebookName;
     window.beakerRegister.bunsenObject = bkLabObj;
