@@ -135,6 +135,8 @@
     window.beakerRegister.canPublish   = canPublish;
     window.beakerRegister.isPublished  = isPublished;
     window.beakerRegister.canBlog      = canBlog;
+
+    bkHelper.refreshBkNotebook();
   });
 
   // beakerlab is asking beaker to save the notebook
